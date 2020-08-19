@@ -1,4 +1,20 @@
 table {
+  width: 80%;
   background-color: white;
   padding: 10px;
+  border-collapse: collapse;
+}
+
+td,
+th {
+  border: 1px solid skyblue;
+  padding: 8px;
+}
+
+.numeric-col {
+  text-align: right;
+}
+
+.not-found {
+  text-align: center;
 }
