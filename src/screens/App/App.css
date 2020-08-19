@@ -1,0 +1,7 @@
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: azure;
+  justify-content: center;
+  align-items: center;
+}
