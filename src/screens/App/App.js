@@ -35,12 +35,15 @@ function App() {
     console.log(...args);
   };
 
+  const handleSelection = (selected) => console.log(selected);
+
   return (
     <div className="wrapper">
       <DataTable
         columns={columnsConfig}
         rows={data}
         onRowClick={handleRowClick}
+        onSelectionChange={handleSelection}
       />
     </div>
   );
