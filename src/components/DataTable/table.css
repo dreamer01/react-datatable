@@ -11,8 +11,21 @@ th {
   padding: 8px;
 }
 
+.data-row:hover {
+  box-shadow: 0px 0px 5px skyblue;
+  cursor: pointer;
+}
+
+.select-col {
+  width: 10%;
+}
+
 .numeric-col {
   text-align: right;
+}
+
+.center {
+  text-align: center;
 }
 
 .not-found {
