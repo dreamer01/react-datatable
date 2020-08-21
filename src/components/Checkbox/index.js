@@ -13,7 +13,7 @@ function Checkbox({ value, onChange, ...props }) {
 
 Checkbox.propTypes = {
   value: PropTypes.string,
-  onChange: PropTypes.func,
+  onChange: PropTypes.func.isRequired,
 };
 
 Checkbox.defaultProps = {
