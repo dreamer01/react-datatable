@@ -1,33 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import DataTable from "../../components/DataTable";
 import "./App.css";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/photos")
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error(error);
+      });
+  }, []);
+
   const columnsConfig = [
     {
-      id: "name",
-      label: "Name",
+      id: "title",
+      label: "Title",
       numeric: false,
     },
     {
-      id: "age",
-      label: "Age",
-      numeric: true,
-      width: "100px",
-    },
-  ];
-
-  const data = [
-    {
-      id: 1,
-      name: "Ajay",
-      age: 20,
-    },
-    {
-      id: 2,
-      name: "Anil",
-      age: "26",
+      id: "thumbnailUrl",
+      label: "Image",
+      numeric: false,
     },
   ];
 
@@ -39,12 +41,16 @@ function App() {
 
   return (
     <div className="wrapper">
-      <DataTable
-        columns={columnsConfig}
-        rows={data}
-        onRowClick={handleRowClick}
-        onSelectionChange={handleSelection}
-      />
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <DataTable
+          columns={columnsConfig}
+          rows={data}
+          onRowClick={handleRowClick}
+          onSelectionChange={handleSelection}
+        />
+      )}
     </div>
   );
 }
