@@ -1,19 +1,14 @@
 table {
-  width: 80%;
+  width: 100%;
   background-color: white;
-  padding: 10px;
   border-collapse: collapse;
+  overflow-y: hidden;
 }
 
 td,
 th {
   border: 1px solid skyblue;
   padding: 8px;
-}
-
-.data-row:hover {
-  box-shadow: 0px 0px 5px skyblue;
-  cursor: pointer;
 }
 
 .select-col {
@@ -24,8 +19,13 @@ th {
   text-align: right;
 }
 
-.center {
+.select-col {
   text-align: center;
+}
+
+.data-row:hover {
+  box-shadow: 0px 0px 5px skyblue;
+  cursor: pointer;
 }
 
 .not-found {

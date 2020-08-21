@@ -27,7 +27,7 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
   const renderColumns = (col) => (
     <th
       key={col.id}
-      style={{ width: col.width || `${90 / (columns.length + 1)}%` }}
+      style={{ width: col.width || `${100 / (columns.length + 1)}%` }}
     >
       {col.label}
     </th>
@@ -42,7 +42,7 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
       }}
       key={row.id}
     >
-      <td className="center">
+      <td className="select-col">
         <Checkbox
           checked={selectedRows.includes(`${row.id}`)}
           value={`${row.id}`}
@@ -51,7 +51,7 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
         />
       </td>
       {columns.map((col) => (
-        <td className={col.numeric ? "numeric-col" : ""} key={col.id}>
+        <td key={col.id} className={col.numeric ? "numeric-col" : ""}>
           {row[col.id]}
         </td>
       ))}
@@ -59,29 +59,71 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
   );
 
   return (
-    <table>
-      <tbody>
-        <tr>
-          <th className="select-col">
-            <Checkbox
-              checked={selectedRows === "All"}
-              value="All"
-              onChange={handleSelect}
-            />
-          </th>
-          {columns.length > 0 && columns.map(renderColumns)}
-        </tr>
-        {rows.length > 0 ? (
-          rows.map(renderRows)
-        ) : (
-          <tr>
-            <td className="not-found" colSpan={columns.length + 1}>
-              No Data Found
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+    <div
+      style={{
+        width: "80%",
+        background: "red",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          position: "relative",
+        }}
+      >
+        <table>
+          <thead>
+            <tr>
+              <th className="select-col">
+                <Checkbox
+                  checked={selectedRows === "All"}
+                  value="All"
+                  onChange={handleSelect}
+                />
+              </th>
+              {columns.length > 0 && columns.map(renderColumns)}
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div
+        style={{
+          width: "100%",
+          height: "500px",
+          overflow: "auto",
+        }}
+      >
+        <table>
+          <thead>
+            <tr>
+              <th className="select-col" style={{ padding: 0, height: 0 }}></th>
+              {columns.length > 0 &&
+                columns.map((col) => (
+                  <th
+                    key={col.id}
+                    style={{
+                      width: col.width || `${100 / (columns.length + 1)}%`,
+                      padding: 0,
+                      height: 0,
+                    }}
+                  ></th>
+                ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length > 0 ? (
+              rows.map(renderRows)
+            ) : (
+              <tr>
+                <td className="not-found" colSpan={columns.length + 1}>
+                  No Data Found
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 
