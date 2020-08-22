@@ -1,24 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import DataTable from "../../components/DataTable";
 import "./App.css";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/photos")
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20`)
       .then((res) => res.json())
-      .then((data) => {
-        setData(data);
+      .then((newData) => {
+        setData((data) => [...data, ...newData]);
         setLoading(false);
       })
       .catch((error) => {
-        setLoading(false);
         console.error(error);
+        setLoading(false);
       });
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    !loading && fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchData, page]);
 
   const columnsConfig = [
     {
@@ -33,24 +40,21 @@ function App() {
     },
   ];
 
-  const handleRowClick = (...args) => {
-    console.log(...args);
-  };
+  const handleRowClick = (...args) => console.log("Row Clicked :: ", ...args);
 
-  const handleSelection = (selected) => console.log(selected);
+  const handleSelection = (selected) =>
+    console.log("Selected Rows :: ", selected);
 
   return (
     <div className="wrapper">
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <DataTable
-          columns={columnsConfig}
-          rows={data}
-          onRowClick={handleRowClick}
-          onSelectionChange={handleSelection}
-        />
-      )}
+      <DataTable
+        columns={columnsConfig}
+        rows={data}
+        onRowClick={handleRowClick}
+        onSelectionChange={handleSelection}
+        hasMore={true}
+        loadMore={() => setPage((page) => page + 1)}
+      />
     </div>
   );
 }
