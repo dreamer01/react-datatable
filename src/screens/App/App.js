@@ -42,8 +42,10 @@ function App() {
 
   const handleRowClick = (...args) => console.log("Row Clicked :: ", ...args);
 
-  const handleSelection = (selected) =>
-    console.log("Selected Rows :: ", selected);
+  const handleSelection = useCallback(
+    (selected) => console.log("Selected Rows :: ", selected),
+    []
+  );
 
   return (
     <div className="wrapper">

@@ -60,14 +60,7 @@ function DataTable({
   );
 
   const renderRows = (row, i) => (
-    <tr
-      className="data-row"
-      onClick={(e) => {
-        console.log(e.eventPhase);
-        onRowClick(row, i);
-      }}
-      key={row.id}
-    >
+    <tr className="data-row" onClick={(e) => onRowClick(row, i)} key={row.id}>
       <td className="select-col">
         <Checkbox
           checked={selectedRows.includes(`${row.id}`)}
@@ -147,15 +140,6 @@ function DataTable({
     </div>
   );
 }
-
-DataTable.propTypes = {
-  columns: PropTypes.array,
-  rows: PropTypes.array,
-  hasMore: PropTypes.bool,
-  onRowClick: PropTypes.func,
-  onSelectionChange: PropTypes.func,
-  loadMore: PropTypes.func,
-};
 
 DataTable.defaultProps = {
   columns: [],
