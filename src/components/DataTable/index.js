@@ -85,17 +85,8 @@ function DataTable({
   );
 
   return (
-    <div
-      style={{
-        width: "80%",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          position: "relative",
-        }}
-      >
+    <div style={{ width: "80%" }}>
+      <div className="head">
         <table>
           <thead>
             <tr>
@@ -111,19 +102,14 @@ function DataTable({
           </thead>
         </table>
       </div>
-      <div
-        id="scroll-view"
-        onScroll={handleLoadMore}
-        style={{
-          width: "100%",
-          height: "500px",
-          overflow: "auto",
-        }}
-      >
+      <div id="scroll-view" onScroll={handleLoadMore}>
         <table>
           <thead>
             <tr>
-              <th className="select-col" style={{ padding: 0, height: 0 }}></th>
+              <th
+                className="select-col"
+                style={{ padding: 0, height: 0, border: 0 }}
+              ></th>
               {columns.length > 0 &&
                 columns.map((col) => (
                   <th
@@ -132,6 +118,7 @@ function DataTable({
                       width: col.width || `${100 / (columns.length + 1)}%`,
                       padding: 0,
                       height: 0,
+                      border: 0,
                     }}
                   ></th>
                 ))}

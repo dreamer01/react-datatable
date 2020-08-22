@@ -17,8 +17,25 @@ const columnsConfig = [
   },
 ];
 
+const rowData = [
+  { id: 1, name: "A", age: 10 },
+  { id: 2, name: "B", age: 10 },
+];
+
 test("render DataTable component", () => {
-  const { getAllByRole } = render(<DataTable columns={columnsConfig} />);
-  expect(getAllByRole("columnheader").length).toBe(columnsConfig.length + 1);
-  getAllByRole("row");
+  const { getAllByRole, rerender } = render(
+    <DataTable columns={columnsConfig} />
+  );
+
+  // Since two theads are rendered
+  expect(getAllByRole("columnheader").length / 2).toBe(
+    columnsConfig.length + 1
+  );
+
+  const rowsBeforeData = getAllByRole("row");
+
+  rerender(<DataTable columns={columnsConfig} rows={rowData} />);
+  expect(getAllByRole("row").length).toBe(
+    rowsBeforeData.length + rowData.length - 1 // Minus 1 for Not Found Row
+  );
 });
