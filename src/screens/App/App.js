@@ -29,6 +29,12 @@ function App() {
 
   const columnsConfig = [
     {
+      id: "id",
+      label: "Id",
+      numeric: true,
+      width: 20,
+    },
+    {
       id: "title",
       label: "Title",
       numeric: false,

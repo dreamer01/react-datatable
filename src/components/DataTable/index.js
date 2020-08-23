@@ -79,7 +79,7 @@ function DataTable({
 
   return (
     <div style={{ width: "80%" }}>
-      <div className="head">
+      <div>
         <table>
           <thead>
             <tr>
@@ -99,19 +99,14 @@ function DataTable({
         <table>
           <thead>
             <tr>
-              <th
-                className="select-col"
-                style={{ padding: 0, height: 0, border: 0 }}
-              ></th>
+              <th className="select-col empty-row "></th>
               {columns.length > 0 &&
                 columns.map((col) => (
                   <th
+                    className="empty-row "
                     key={col.id}
                     style={{
                       width: col.width || `${100 / (columns.length + 1)}%`,
-                      padding: 0,
-                      height: 0,
-                      border: 0,
                     }}
                   ></th>
                 ))}
