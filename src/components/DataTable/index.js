@@ -5,35 +5,33 @@ import debounce from "../../utils/debounce";
 import Checkbox from "../Checkbox";
 import "./table.css";
 
-function DataTable({
-  columns,
-  rows,
-  onRowClick,
-  onSelectionChange,
-  loadMore,
-  hasMore,
-}) {
-  const [loading, setLoading] = useState(true);
+function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
+  const [loading, setLoading] = useState(false);
+  const [offSet, setOffset] = useState(0);
+  const [data, setData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
-    setLoading(false);
-  }, [rows]);
+    const start = offSet * 20;
+    const end = start + 21;
+    setData(rows.slice(start, end));
+  }, [offSet, rows]);
 
   useEffect(() => {
     onSelectionChange(selectedRows);
   }, [onSelectionChange, selectedRows]);
 
   const handleLoadMore = debounce(() => {
-    if (
-      document.getElementById("scroll-view").scrollTop >
-        document.getElementById("scroll-view").scrollHeight -
-          document.body.offsetHeight &&
-      hasMore
-    ) {
-      console.log("Load more...");
+    const { scrollTop, scrollHeight } = document.getElementById("scroll-view");
+    console.log(scrollTop);
+    if (scrollTop > scrollHeight - document.body.offsetHeight) {
       setLoading(true);
-      loadMore();
+
+      setOffset((offset) => offset + 1);
+    } else if (0 >= scrollTop && scrollTop < 200) {
+      setLoading(true);
+
+      setOffset((offset) => offset && offset - 1);
     }
   }, 100);
 
@@ -113,8 +111,8 @@ function DataTable({
             </tr>
           </thead>
           <tbody>
-            {rows.length > 0 ? (
-              rows.map(renderRows)
+            {data.length > 0 ? (
+              data.map(renderRows)
             ) : (
               <tr>
                 <td className="not-found" colSpan={columns.length + 1}>
@@ -136,13 +134,18 @@ function DataTable({
   );
 }
 
+DataTable.propTypes = {
+  columns: PropTypes.array,
+  rows: PropTypes.array,
+  onRowClick: PropTypes.func,
+  onSelectionChange: PropTypes.func,
+};
+
 DataTable.defaultProps = {
   columns: [],
   rows: [],
-  hasMore: false,
   onRowClick: () => {},
   onSelectionChange: () => {},
-  loadMore: () => {},
 };
 
 export default DataTable;
