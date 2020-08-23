@@ -4,28 +4,23 @@ import DataTable from "../../components/DataTable";
 import "./App.css";
 
 function App() {
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
 
   const fetchData = useCallback(() => {
-    setLoading(true);
-    fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20`)
+    fetch(`https://jsonplaceholder.typicode.com/photos`)
       .then((res) => res.json())
-      .then((newData) => {
-        setData((data) => [...data, ...newData]);
-        setLoading(false);
+      .then((data) => {
+        setData(data);
       })
       .catch((error) => {
         console.error(error);
-        setLoading(false);
       });
-  }, [page]);
+  }, []);
 
   useEffect(() => {
-    !loading && fetchData();
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchData, page]);
+  }, [fetchData]);
 
   const columnsConfig = [
     {
@@ -60,8 +55,6 @@ function App() {
         rows={data}
         onRowClick={handleRowClick}
         onSelectionChange={handleSelection}
-        hasMore={true}
-        loadMore={() => setPage((page) => page + 1)}
       />
     </div>
   );

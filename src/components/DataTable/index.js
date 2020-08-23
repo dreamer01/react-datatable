@@ -5,19 +5,13 @@ import debounce from "../../utils/debounce";
 import Checkbox from "../Checkbox";
 import "./table.css";
 
-function DataTable({
-  columns,
-  rows,
-  onRowClick,
-  onSelectionChange,
-  loadMore,
-  hasMore,
-}) {
-  const [loading, setLoading] = useState(true);
+function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
-    setLoading(false);
+    setData(rows.slice(0, 20));
   }, [rows]);
 
   useEffect(() => {
@@ -27,13 +21,13 @@ function DataTable({
   const handleLoadMore = debounce(() => {
     if (
       document.getElementById("scroll-view").scrollTop >
-        document.getElementById("scroll-view").scrollHeight -
-          document.body.offsetHeight &&
-      hasMore
+      document.getElementById("scroll-view").scrollHeight -
+        document.body.offsetHeight
     ) {
       console.log("Load more...");
-      setLoading(true);
-      loadMore();
+      // setLoading(true);
+      const newData = rows.slice(data.length, data.length + 20);
+      setData((data) => [...data, ...newData]);
     }
   }, 100);
 
@@ -113,8 +107,8 @@ function DataTable({
             </tr>
           </thead>
           <tbody>
-            {rows.length > 0 ? (
-              rows.map(renderRows)
+            {data.length > 0 ? (
+              data.map(renderRows)
             ) : (
               <tr>
                 <td className="not-found" colSpan={columns.length + 1}>
@@ -136,13 +130,18 @@ function DataTable({
   );
 }
 
+DataTable.propTypes = {
+  columns: PropTypes.array,
+  rows: PropTypes.array,
+  onRowClick: PropTypes.func,
+  onSelectionChange: PropTypes.func,
+};
+
 DataTable.defaultProps = {
   columns: [],
   rows: [],
-  hasMore: false,
   onRowClick: () => {},
   onSelectionChange: () => {},
-  loadMore: () => {},
 };
 
 export default DataTable;
