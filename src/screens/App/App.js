@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
+import debounce from "../../utils/debounce";
 import DataTable from "../../components/DataTable";
 import "./App.css";
 
@@ -7,23 +8,36 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-  const fetchData = useCallback(() => {
-    fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20`)
-      .then((res) => res.json())
-      .then((newData) => {
-        setData((data) => [...data, ...newData]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
-  }, [page]);
+  const fetchData = useCallback(
+    debounce(() => {
+      fetch(
+        `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20&q=${search}`
+      )
+        .then((res) => res.json())
+        .then((newData) => {
+          if (page === 1) setData(newData);
+          else setData((data) => [...data, ...newData]);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
+    }, 1000)
+  );
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
+
+  useEffect(() => {
+    if (page === 1) fetchData();
+    setPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   const columnsConfig = [
     {
@@ -44,6 +58,10 @@ function App() {
     },
   ];
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+
   const handleLoadMore = useCallback(() => {
     if (!loading) {
       setLoading(true);
@@ -60,6 +78,14 @@ function App() {
 
   return (
     <div className="wrapper">
+      <div>
+        <input
+          type="search"
+          value={search}
+          onChange={handleSearch}
+          placeholder="Search Here..."
+        />
+      </div>
       <DataTable
         columns={columnsConfig}
         rows={data}

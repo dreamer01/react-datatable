@@ -35,7 +35,7 @@ function DataTable({
       setLoading(true);
       loadMore();
     }
-  }, 100);
+  }, 250);
 
   const handleSelect = (e, value) => {
     if (value === "All") {
@@ -151,4 +151,4 @@ DataTable.defaultProps = {
   loadMore: () => {},
 };
 
-export default DataTable;
+export default React.memo(DataTable);
