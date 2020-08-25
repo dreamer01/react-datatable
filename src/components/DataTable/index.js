@@ -44,10 +44,18 @@ function DataTable({
     } else if (e.target.checked) {
       if (selectedRows === "All") setSelectedRows([value]);
       else setSelectedRows((selectedRows) => [...selectedRows, value]);
-    } else
-      setSelectedRows((selectedRows) =>
-        selectedRows.filter((rowId) => rowId !== value)
-      );
+    } else {
+      if (selectedRows === "All")
+        setSelectedRows(
+          rows.map((row) => {
+            if (`${row.id}` !== value) return `${row.id}`;
+          })
+        );
+      else
+        setSelectedRows((selectedRows) =>
+          selectedRows.filter((rowId) => rowId !== value)
+        );
+    }
   };
 
   const renderColumns = (col) => (
@@ -63,7 +71,7 @@ function DataTable({
     <tr className="data-row" onClick={(e) => onRowClick(row, i)} key={row.id}>
       <td className="select-col">
         <Checkbox
-          checked={selectedRows.includes(`${row.id}`)}
+          checked={selectedRows.includes(`${row.id}`) || selectedRows === "All"}
           value={`${row.id}`}
           onChange={handleSelect}
           onClick={(e) => e.stopPropagation()} // Avoids Row Click Event
