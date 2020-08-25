@@ -47,9 +47,7 @@ function DataTable({
     } else {
       if (selectedRows === "All")
         setSelectedRows(
-          rows.map((row) => {
-            if (`${row.id}` !== value) return `${row.id}`;
-          })
+          rows.map((row) => `${row.id}`).filter((rowId) => rowId !== value)
         );
       else
         setSelectedRows((selectedRows) =>
