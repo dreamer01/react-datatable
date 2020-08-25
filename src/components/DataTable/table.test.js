@@ -68,9 +68,13 @@ test("render DataTable and prop function onSelectionChange is invoked", () => {
     />
   );
 
+  // On initial render return empty array
+  expect(onSelectionChange).toHaveBeenCalledWith([]);
+
   userEvent.click(getAllByRole("checkbox")[0]); // Header Checkbox
   expect(onSelectionChange).toHaveBeenCalledWith("All");
 
-  userEvent.click(getAllByRole("checkbox")[1]); // First row with data
-  expect(onSelectionChange).toHaveBeenCalledWith(["1"]);
+  // UnSelect First Row
+  userEvent.click(getAllByRole("checkbox")[1]);
+  expect(onSelectionChange).toHaveBeenCalledWith(["2"]);
 });
