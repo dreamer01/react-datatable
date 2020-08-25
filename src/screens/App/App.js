@@ -4,23 +4,26 @@ import DataTable from "../../components/DataTable";
 import "./App.css";
 
 function App() {
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
 
   const fetchData = useCallback(() => {
-    fetch(`https://jsonplaceholder.typicode.com/photos`)
+    fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20`)
       .then((res) => res.json())
-      .then((data) => {
-        setData(data);
+      .then((newData) => {
+        setData((data) => [...data, ...newData]);
+        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
+        setLoading(false);
       });
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchData]);
+  }, [fetchData, page]);
 
   const columnsConfig = [
     {
@@ -41,6 +44,13 @@ function App() {
     },
   ];
 
+  const handleLoadMore = useCallback(() => {
+    if (!loading) {
+      setLoading(true);
+      setPage((page) => page + 1);
+    }
+  }, [loading]);
+
   const handleRowClick = (...args) => console.log("Row Clicked :: ", ...args);
 
   const handleSelection = useCallback(
@@ -55,6 +65,8 @@ function App() {
         rows={data}
         onRowClick={handleRowClick}
         onSelectionChange={handleSelection}
+        hasMore={true}
+        loadMore={handleLoadMore}
       />
     </div>
   );

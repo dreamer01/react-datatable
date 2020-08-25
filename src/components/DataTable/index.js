@@ -5,13 +5,19 @@ import debounce from "../../utils/debounce";
 import Checkbox from "../Checkbox";
 import "./table.css";
 
-function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
+function DataTable({
+  columns,
+  rows,
+  onRowClick,
+  onSelectionChange,
+  loadMore,
+  hasMore,
+}) {
+  const [loading, setLoading] = useState(true);
   const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
-    setData(rows.slice(0, 20));
+    setLoading(false);
   }, [rows]);
 
   useEffect(() => {
@@ -21,13 +27,13 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
   const handleLoadMore = debounce(() => {
     if (
       document.getElementById("scroll-view").scrollTop >
-      document.getElementById("scroll-view").scrollHeight -
-        document.body.offsetHeight
+        document.getElementById("scroll-view").scrollHeight -
+          document.body.offsetHeight &&
+      hasMore
     ) {
       console.log("Load more...");
-      // setLoading(true);
-      const newData = rows.slice(data.length, data.length + 20);
-      setData((data) => [...data, ...newData]);
+      setLoading(true);
+      loadMore();
     }
   }, 100);
 
@@ -38,10 +44,16 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
     } else if (e.target.checked) {
       if (selectedRows === "All") setSelectedRows([value]);
       else setSelectedRows((selectedRows) => [...selectedRows, value]);
-    } else
-      setSelectedRows((selectedRows) =>
-        selectedRows.filter((rowId) => rowId !== value)
-      );
+    } else {
+      if (selectedRows === "All")
+        setSelectedRows(
+          rows.map((row) => `${row.id}`).filter((rowId) => rowId !== value)
+        );
+      else
+        setSelectedRows((selectedRows) =>
+          selectedRows.filter((rowId) => rowId !== value)
+        );
+    }
   };
 
   const renderColumns = (col) => (
@@ -57,7 +69,7 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
     <tr className="data-row" onClick={(e) => onRowClick(row, i)} key={row.id}>
       <td className="select-col">
         <Checkbox
-          checked={selectedRows.includes(`${row.id}`)}
+          checked={selectedRows.includes(`${row.id}`) || selectedRows === "All"}
           value={`${row.id}`}
           onChange={handleSelect}
           onClick={(e) => e.stopPropagation()} // Avoids Row Click Event
@@ -107,8 +119,8 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
             </tr>
           </thead>
           <tbody>
-            {data.length > 0 ? (
-              data.map(renderRows)
+            {rows.length > 0 ? (
+              rows.map(renderRows)
             ) : (
               <tr>
                 <td className="not-found" colSpan={columns.length + 1}>
@@ -130,18 +142,13 @@ function DataTable({ columns, rows, onRowClick, onSelectionChange }) {
   );
 }
 
-DataTable.propTypes = {
-  columns: PropTypes.array,
-  rows: PropTypes.array,
-  onRowClick: PropTypes.func,
-  onSelectionChange: PropTypes.func,
-};
-
 DataTable.defaultProps = {
   columns: [],
   rows: [],
+  hasMore: false,
   onRowClick: () => {},
   onSelectionChange: () => {},
+  loadMore: () => {},
 };
 
 export default DataTable;
