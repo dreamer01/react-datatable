@@ -9,7 +9,6 @@ function App() {
   const [page, setPage] = useState(1);
 
   const fetchData = useCallback(() => {
-    setLoading(true);
     fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20`)
       .then((res) => res.json())
       .then((newData) => {
@@ -23,8 +22,7 @@ function App() {
   }, [page]);
 
   useEffect(() => {
-    !loading && fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchData();
   }, [fetchData, page]);
 
   const columnsConfig = [
@@ -46,6 +44,13 @@ function App() {
     },
   ];
 
+  const handleLoadMore = useCallback(() => {
+    if (!loading) {
+      setLoading(true);
+      setPage((page) => page + 1);
+    }
+  }, [loading]);
+
   const handleRowClick = (...args) => console.log("Row Clicked :: ", ...args);
 
   const handleSelection = useCallback(
@@ -61,7 +66,7 @@ function App() {
         onRowClick={handleRowClick}
         onSelectionChange={handleSelection}
         hasMore={true}
-        loadMore={() => setPage((page) => page + 1)}
+        loadMore={handleLoadMore}
       />
     </div>
   );
