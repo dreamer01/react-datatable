@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 import debounce from "../../utils/debounce";
@@ -9,11 +10,14 @@ function App() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("");
 
   const fetchData = useCallback(
     debounce(() => {
+      setLoading(true);
+      const param = filter ? filter : "q";
       fetch(
-        `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20&q=${search}`
+        `https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=20&${param}=${search}`
       )
         .then((res) => res.json())
         .then((newData) => {
@@ -30,14 +34,17 @@ function App() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   useEffect(() => {
     if (page === 1) fetchData();
-    setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    else setPage(1);
   }, [search]);
+
+  useEffect(() => {
+    if (search) setSearch("");
+    else fetchData();
+  }, [filter]);
 
   const columnsConfig = [
     {
@@ -52,11 +59,16 @@ function App() {
       numeric: false,
     },
     {
-      id: "thumbnailUrl",
-      label: "Image",
+      id: "url",
+      label: "Image URL",
       numeric: false,
     },
   ];
+
+  const handleFilter = (e) => {
+    setFilter(e.target.value);
+    setSearch("");
+  };
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -78,8 +90,14 @@ function App() {
 
   return (
     <div className="wrapper">
-      <div>
+      <div className="search-view">
+        <select className="form-ele" value={filter} onChange={handleFilter}>
+          <option value="">Filter</option>
+          <option value="title">Title</option>
+          <option value="url">URL</option>
+        </select>
         <input
+          className="form-ele"
           type="search"
           value={search}
           onChange={handleSearch}
@@ -94,6 +112,13 @@ function App() {
         hasMore={true}
         loadMore={handleLoadMore}
       />
+
+      {// Showing Loading spinner for first page
+      loading && page === 1 && (
+        <div className="spinner-view">
+          <div className="spinner spinner-circle" />
+        </div>
+      )}
     </div>
   );
 }
